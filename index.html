@@ -1,0 +1,167 @@
+<head>
+<meta name="viewport" content="width=device-width，initial-scale=1">
+<title>这是林校测试网站<title>
+</head>
+
+<body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>凌霄基础网页</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            width:100vw;height:100vh;overflow:hidden;
+            font-family:"微软雅黑",sans-serif;
+            color:#fff;
+        }
+        /* 粒子画布铺满全屏 */
+        #particles{
+            position:fixed;top:0;left:0;
+            width:100%;height:100%;
+            background:#050816;
+            z-index:-1;
+        }
+        /* 两个页面盒子 */
+        .page{
+            position:absolute;top:0;left:0;
+            width:100vw;height:100vh;
+            display:flex;flex-direction:column;
+            justify-content:center;align-items:center;
+            transition:opacity 0.5s ease;
+        }
+        #menuPage{opacity:0;pointer-events:none;}
+        /* 毛玻璃盒子样式 */
+        .box{
+            background:rgba(255,255,255,0.08);
+            backdrop-filter:blur(12px);
+            padding:50px 80px;border-radius:20px;
+            border:1px solid rgba(255,255,255,0.15);
+            text-align:center;
+            animation:fadeIn 1.5s ease forwards;
+        }
+        h1{font-size:38px;margin-bottom:15px;}
+        p{font-size:20px;margin-bottom:30px;opacity:0.9;}
+        /* 按钮样式 */
+        .btn{
+            padding:12px 40px;font-size:18px;
+            background:#2e7d32;color:#fff;
+            border:none;border-radius:30px;
+            cursor:pointer;transition:all 0.3s;
+            text-decoration:none;display:inline-block;
+        }
+        .btn:hover{background:#82c91e;transform:scale(1.05);}
+        /* 菜单选项样式 */
+        .menu-item{
+            display:block;width:220px;
+            padding:15px;margin:15px auto;
+            background:#2e7d32;color:#fff;
+            text-decoration:none;border-radius:30px;
+            transition:all 0.3s;font-size:17px;
+        }
+        .menu-item:hover{background:#82c91e;transform:scale(1.05);}
+        @keyframes fadeIn{
+            from{opacity:0;transform:scale(0.8);}
+            to{opacity:1;transform:scale(1);}
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+
+    <!-- 主页 -->
+    <div id="homePage" class="page">
+        <div class="box">
+            <h1>你好呀！</h1>
+            <p>这是林校校园网基础网页</p >
+            <button class="btn" onclick="goToMenu()">进入</button>
+        </div>
+    </div>
+
+    <!-- 菜单页 -->
+    <div id="menuPage" class="page">
+        <div class="box">
+            <a class="menu-item" href=" ">校园网</a >
+            <a class="menu-item" href="#">校园情况</a >
+            <button class="btn" style="margin-top:20px;" onclick="goToHome()">返回</button>
+        </div>
+    </div>
+
+<!-- 粒子特效JS -->
+<script>
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w=canvas.width=innerWidth;
+let h=canvas.height=innerHeight;
+let particles=[];
+
+class Particle{
+    constructor(){
+        this.x=Math.random()*w;
+        this.y=Math.random()*h;
+        this.r=Math.random()*2+1;
+        this.sx=Math.random()*0.5-0.25;
+        this.sy=Math.random()*0.5-0.25;
+    }
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+        ctx.fillStyle="#82c91e";ctx.fill();
+    }
+    update(){
+        this.x+=this.sx;this.y+=this.sy;
+        if(this.x<0||this.x>w)this.sx*=-1;
+        if(this.y<0||this.y>h)this.sy*=-1;
+        this.draw();
+    }
+}
+
+for(let i=0;i<=120;i++)particles.push(new Particle());
+
+function line(){
+    for(let a=0;a<particles.length;a++){
+        for(let b=a+1;b<particles.length;b++){
+            let dx=particles[a].x-particles[b].x;
+            let dy=particles[a].y-particles[b].y;
+            let d=Math.sqrt(dx*dx+dy*dy);
+            if(d<80){
+                ctx.beginPath();
+                ctx.moveTo(particles[a].x,particles[a].y);
+                ctx.lineTo(particles[b].x,particles[b].y);
+                ctx.strokeStyle="rgba(130,201,30,0.2)";
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animate(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(v=>v.update());line();
+    requestAnimationFrame(animate);
+}
+animate();
+
+window.onresize=()=>{
+    w=canvas.width=innerWidth;
+    h=canvas.height=innerHeight;
+}
+
+// 页面切换函数
+function goToMenu(){
+    document.getElementById('homePage').style.opacity='0';
+    document.getElementById('homePage').style.pointerEvents='none';
+    document.getElementById('menuPage').style.opacity='1';
+    document.getElementById('menuPage').style.pointerEvents='auto';
+}
+function goToHome(){
+    document.getElementById('menuPage').style.opacity='0';
+    document.getElementById('menuPage').style.pointerEvents='none';
+    document.getElementById('homePage').style.opacity='1';
+    document.getElementById('homePage').style.pointerEvents='auto';
+}
+</script>
+</body>
+</html>
